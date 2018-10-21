@@ -9,24 +9,6 @@
 		READ_TYPE = 0xc0
 	}
 
-	public enum VendorCommands : byte
-	{
-		READ_REG = 0x95,
-		WRITE_REG = 0x9a,
-		SERIAL = 0xa1,
-		PRINT = 0xa3,
-		MODEM = 0xa4,
-		MEMW = 0xa6, // aka mCH341_PARA_CMD_W0
-		MEMR = 0xac, // aka mCH341_PARA_CMD_R0
-		SPI = 0xa8,
-		SIO = 0xa9,
-		I2C = 0xaa,
-		UIO = 0xab,
-		I2C_STATUS = 0x52,
-		I2C_COMMAND = 0x53,
-		VERSION = 0x5f // at least in serial mode?
-	}
-
 	/// <summary>
 	/// These are all from ch341dll.h, mostly untested
 	///
@@ -51,10 +33,34 @@
 		END = 0x00 // Finish commands with this. is this really necessary?
 	}
 
+	public enum VendorCommands : byte
+	{
+		READ_REG = 0x95,
+		WRITE_REG = 0x9a,
+		SERIAL = 0xa1,
+		PRINT = 0xa3,
+		MODEM = 0xa4,
+		MEMW = 0xa6, // aka mCH341_PARA_CMD_W0
+		MEMR = 0xac, // aka mCH341_PARA_CMD_R0
+		SPI = 0xa8,
+		SIO = 0xa9,
+		I2C = 0xaa,
+		UIO = 0xab,
+		I2C_STATUS = 0x52,
+		I2C_COMMAND = 0x53,
+		VERSION = 0x5f // at least in serial mode?
+	}
+
 	public static class I2CcommandBuilder
 	{
+		#region Fields
+
 		internal static readonly byte[] StartCommand = new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.STA, (byte)I2CCommands.END };
 		internal static readonly byte[] StopCommand = new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.STO, (byte)I2CCommands.END };
+
+		#endregion Fields
+
+		#region Methods
 
 		public static byte[] SetSpeedCommand(uint speed_khz)
 		{
@@ -83,15 +89,17 @@
 			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.STA, (byte)I2CCommands.OUT, i2c_addr, (byte)I2CCommands.STO, (byte)I2CCommands.END };
 		}
 
+		internal static byte[] ReadCommand(int length)
+		{
+			// not sure why/if this needs a -1 like I seemed to elsewhere
+			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.IN /*| length*/, (byte)I2CCommands.END };
+		}
+
 		internal static byte[] WriteByteCommand(byte bb)
 		{
 			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.OUT, bb, (byte)I2CCommands.END };
 		}
 
-		internal static byte[] ReadCommand(int length)
-		{
-			// not sure why/if this needs a -1 like I seemed to elsewhere
-			return new byte[] { (byte)VendorCommands.I2C, (byte)((byte)I2CCommands.IN /*| length*/), (byte)I2CCommands.END };
-		}
+		#endregion Methods
 	}
 }
