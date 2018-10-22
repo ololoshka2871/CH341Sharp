@@ -3,7 +3,7 @@ using System;
 
 namespace CH341Sharp
 {
-	internal class CH341Exception : Exception
+	public class CH341Exception : Exception
 	{
 		#region Constructors
 
@@ -18,7 +18,7 @@ namespace CH341Sharp
 		#endregion Constructors
 	}
 
-	internal class CommandException : WriteException
+	public class CommandException : WriteException
 	{
 		#region Constructors
 
@@ -38,7 +38,7 @@ namespace CH341Sharp
 		#endregion Methods
 	}
 
-	internal class DeviceConfigurationsIncorrect : CH341Exception
+	public class DeviceConfigurationsIncorrect : CH341Exception
 	{
 		#region Constructors
 
@@ -49,7 +49,7 @@ namespace CH341Sharp
 		#endregion Constructors
 	}
 
-	internal class DeviceNotFoundException : CH341Exception
+	public class DeviceNotFoundException : CH341Exception
 	{
 		#region Fields
 
@@ -82,7 +82,34 @@ namespace CH341Sharp
 		#endregion Methods
 	}
 
-	internal class ReadException : CH341Exception
+	public class I2CAddressException : CH341Exception
+	{
+		#region Fields
+
+		public readonly int i2c_address;
+
+		#endregion Fields
+
+		#region Constructors
+
+		public I2CAddressException(int i2c_address) : base()
+		{
+			this.i2c_address = i2c_address;
+		}
+
+		#endregion Constructors
+
+		#region Methods
+
+		public override string ToString()
+		{
+			return $"Requested operation with incorrect I2C address {i2c_address}";
+		}
+
+		#endregion Methods
+	}
+
+	public class ReadException : CH341Exception
 	{
 		#region Constructors
 
@@ -109,7 +136,7 @@ namespace CH341Sharp
 		#endregion Methods
 	}
 
-	internal class WriteException : CH341Exception
+	public class WriteException : CH341Exception
 	{
 		#region Constructors
 

@@ -30,7 +30,7 @@ namespace Tests
 		{
 			var ch341 = new CH341(CH341registry);
 
-			for (byte i = 0; i < 250; ++i)
+			for (int i = CH341.I2C_AddressMin; i <= CH341.I2C_AddressMax; ++i)
 			{
 				ch341.I2C_Detect(i);
 			}

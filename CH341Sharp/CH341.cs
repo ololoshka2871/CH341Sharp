@@ -8,6 +8,9 @@ namespace CH341Sharp
 	{
 		#region Fields
 
+		public static readonly int I2C_AddressMin = 0;
+		public static readonly int I2C_AddressMax = 0x7F;
+
 		public static readonly int DEFAULT_PID = 0x5512;
 		public static readonly int DEFAULT_VID = 0x1a86;
 		public static readonly int DefaultI2CTimeout = 10;
@@ -82,7 +85,7 @@ namespace CH341Sharp
 		/// Use the single byte write style to get an ack bit from writing to an address with no commands.
 		/// </summary>
 		/// <returns></returns>
-		public bool I2C_Detect(byte i2c_addr)
+		public bool I2C_Detect(int i2c_addr)
 		{
 			Write(I2CcommandBuilder.DetectCommand(i2c_addr));
 			return IsAck();

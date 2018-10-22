@@ -24,12 +24,12 @@ namespace I2CScaner
 
 				Console.WriteLine($"Using device {ch341.ToString()}...");
 				int foud_count = 0;
-				for (byte i = 0; i < 250; ++i)
+				for (int i = CH341.I2C_AddressMin; i <= CH341.I2C_AddressMax; ++i)
 				{
 					if (ch341.I2C_Detect(i))
 					{
 						++foud_count;
-						Console.WriteLine($"Found i2c slave device at address {i}");
+						Console.WriteLine($"Found i2c slave device at address 0x{i:X}");
 					}
 				}
 				Console.WriteLine($"Scan complete, {foud_count} found.");

@@ -84,9 +84,15 @@
 			return new byte[] { (byte)VendorCommands.I2C, (byte)((byte)I2CCommands.SET | sbit), (byte)I2CCommands.END };
 		}
 
-		internal static byte[] DetectCommand(byte i2c_addr)
+		internal static byte[] DetectCommand(int i2c_addr)
 		{
-			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.STA, (byte)I2CCommands.OUT, i2c_addr, (byte)I2CCommands.STO, (byte)I2CCommands.END };
+			if (i2c_addr < CH341.I2C_AddressMin || i2c_addr > CH341.I2C_AddressMax)
+			{
+				throw new I2CAddressException(i2c_addr);
+			}
+
+			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.STA,
+				(byte)I2CCommands.OUT, (byte)((i2c_addr << 1) | 0x1), (byte)I2CCommands.STO, (byte)I2CCommands.END };
 		}
 
 		internal static byte[] ReadCommand(int length)
