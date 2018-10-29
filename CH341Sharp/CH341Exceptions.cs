@@ -3,7 +3,7 @@ using System;
 
 namespace CH341Sharp
 {
-	internal class CH341Exception : Exception
+	public class CH341Exception : Exception
 	{
 		#region Constructors
 
@@ -18,7 +18,7 @@ namespace CH341Sharp
 		#endregion Constructors
 	}
 
-	internal class CommandException : WriteException
+	public class CommandException : WriteException
 	{
 		#region Constructors
 
@@ -38,7 +38,7 @@ namespace CH341Sharp
 		#endregion Methods
 	}
 
-	internal class DeviceConfigurationsIncorrect : CH341Exception
+	public class DeviceConfigurationsIncorrect : CH341Exception
 	{
 		#region Constructors
 
@@ -49,7 +49,7 @@ namespace CH341Sharp
 		#endregion Constructors
 	}
 
-	internal class DeviceNotFoundException : CH341Exception
+	public class DeviceNotFoundException : CH341Exception
 	{
 		#region Fields
 
@@ -82,7 +82,7 @@ namespace CH341Sharp
 		#endregion Methods
 	}
 
-	internal class ReadException : CH341Exception
+	public class ReadException : CH341Exception
 	{
 		#region Constructors
 
@@ -109,7 +109,7 @@ namespace CH341Sharp
 		#endregion Methods
 	}
 
-	internal class WriteException : CH341Exception
+	public class WriteException : CH341Exception
 	{
 		#region Constructors
 

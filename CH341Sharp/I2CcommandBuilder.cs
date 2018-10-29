@@ -86,7 +86,7 @@
 
 		internal static byte[] DetectCommand(byte i2c_addr)
 		{
-			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.STA, (byte)I2CCommands.OUT, i2c_addr, (byte)I2CCommands.STO, (byte)I2CCommands.END };
+			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.STA, (byte)I2CCommands.OUT, (byte)(i2c_addr << 1), (byte)I2CCommands.STO, (byte)I2CCommands.END };
 		}
 
 		internal static byte[] ReadCommand(int length)
