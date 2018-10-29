@@ -54,7 +54,7 @@ namespace CH341Sharp
 
 		#region Methods
 
-		public void Dispose()
+		public void Close()
 		{
 			if (CH341device != null)
 			{
@@ -76,6 +76,11 @@ namespace CH341Sharp
 				}
 				CH341device = null;
 			}
+		}
+
+		public void Dispose()
+		{
+			Close();
 		}
 
 		/// <summary>
