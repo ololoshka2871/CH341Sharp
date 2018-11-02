@@ -1,4 +1,6 @@
-﻿namespace CH341Sharp
+﻿using System.Linq;
+
+namespace CH341Sharp
 {
 	/// <summary>
 	/// This is just usb standard stuff...
@@ -25,6 +27,8 @@
 		STO = 0x75,
 		OUT = 0x80,
 		IN = 0xc0,
+		IN_ACK = IN | 1,
+		IN_NAK = IN | 0,
 		MAX = 32, // min (0x3f, 32) ?! (wrong place for this)
 		SET = 0x60, // bit 7 apparently SPI bit order, bit 2 spi single vs spi double
 		US = 0x40, // vendor code uses a few of these in 20khz mode?
@@ -91,8 +95,12 @@
 
 		internal static byte[] ReadCommand(int length)
 		{
-			// not sure why/if this needs a -1 like I seemed to elsewhere
-			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.IN /*| length*/, (byte)I2CCommands.END };
+			var result = Enumerable.Repeat((byte)I2CCommands.IN_ACK, length + 2).ToArray();
+			result[0] = (byte)VendorCommands.I2C;
+			result[1] = (byte)(((byte)I2CCommands.IN) | length);
+			result[length + 0] = (byte)I2CCommands.IN_NAK;
+			result[length + 1] = (byte)I2CCommands.END;
+			return result;
 		}
 
 		internal static byte[] WriteByteCommand(byte bb)
