@@ -95,7 +95,8 @@ namespace CH341Sharp
 
 		internal static byte[] ReadCommand(int length)
 		{
-			return new byte[] { (byte)VendorCommands.I2C, (byte)((byte)I2CCommands.IN | length), (byte)I2CCommands.END };
+			return new byte[] { (byte)VendorCommands.I2C,
+				(byte)((byte)I2CCommands.IN | (length > 1 ? length : 0)), (byte)I2CCommands.END };
 		}
 
 		internal static byte[] WriteByteCommand(byte bb)
