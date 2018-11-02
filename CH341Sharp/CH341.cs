@@ -116,13 +116,20 @@ namespace CH341Sharp
 		/// <returns>array of data</returns>
 		public byte[] ReadBlock(int length)
 		{
-			Write(I2CcommandBuilder.ReadCommand(length));
-
 			byte[] rval = new byte[length];
-			var err = reader.Read(rval, 0, rval.Length, I2CTimeout, out int transferLength);
-			if (err != ErrorCode.Ok || transferLength != length)
+			int ready = 0;
+			while (ready < length)
 			{
-				throw new ReadException(err);
+				var toread = length - ready;
+				if (toread > (int)I2CCommands.MAX)
+					toread = (int)I2CCommands.MAX;
+				Write(I2CcommandBuilder.ReadCommand(toread));
+				var err = reader.Read(rval, ready, toread, I2CTimeout, out int transferLength);
+				if (err != ErrorCode.Ok || transferLength != toread)
+				{
+					throw new ReadException(err);
+				}
+				ready += toread;
 			}
 			return rval;
 		}

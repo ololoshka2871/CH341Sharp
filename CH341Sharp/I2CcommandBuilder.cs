@@ -95,12 +95,7 @@ namespace CH341Sharp
 
 		internal static byte[] ReadCommand(int length)
 		{
-			var result = Enumerable.Repeat((byte)I2CCommands.IN_ACK, length + 2).ToArray();
-			result[0] = (byte)VendorCommands.I2C;
-			result[1] = (byte)(((byte)I2CCommands.IN) | length);
-			result[length + 0] = (byte)I2CCommands.IN_NAK;
-			result[length + 1] = (byte)I2CCommands.END;
-			return result;
+			return new byte[] { (byte)VendorCommands.I2C, (byte)((byte)I2CCommands.IN | length), (byte)I2CCommands.END };
 		}
 
 		internal static byte[] WriteByteCommand(byte bb)
