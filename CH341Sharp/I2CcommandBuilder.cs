@@ -37,6 +37,14 @@ namespace CH341Sharp
 		END = 0x00 // Finish commands with this. is this really necessary?
 	}
 
+	public enum UIOCommands : byte
+	{
+		IN = 0x00,
+		OUT = 0x80,
+		DIR = 0x40,
+		END = 0x20
+	}
+
 	public enum VendorCommands : byte
 	{
 		READ_REG = 0x95,
@@ -99,9 +107,25 @@ namespace CH341Sharp
 				(byte)((byte)I2CCommands.IN | (length > 1 ? length : 0)), (byte)I2CCommands.END };
 		}
 
+		internal static byte[] ReadCommandACK()
+		{
+			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.IN_ACK, (byte)I2CCommands.END };
+		}
+
+		internal static byte[] ReadCommandNAK()
+		{
+			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.IN_NAK, (byte)I2CCommands.END };
+		}
+
 		internal static byte[] WriteByteCommand(byte bb)
 		{
 			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.OUT, bb, (byte)I2CCommands.END };
+		}
+
+		internal static byte[] ReadGPIOCommand()
+		{
+			return new byte[] { (byte)VendorCommands.UIO, (byte)UIOCommands.DIR,
+				(byte)UIOCommands.IN, (byte)UIOCommands.END };
 		}
 
 		#endregion Methods
