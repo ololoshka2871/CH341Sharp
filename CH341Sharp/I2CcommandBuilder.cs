@@ -1,4 +1,6 @@
-﻿namespace CH341Sharp
+﻿using System.Linq;
+
+namespace CH341Sharp
 {
 	/// <summary>
 	/// This is just usb standard stuff...
@@ -25,12 +27,22 @@
 		STO = 0x75,
 		OUT = 0x80,
 		IN = 0xc0,
+		IN_ACK = IN | 1,
+		IN_NAK = IN | 0,
 		MAX = 32, // min (0x3f, 32) ?! (wrong place for this)
 		SET = 0x60, // bit 7 apparently SPI bit order, bit 2 spi single vs spi double
 		US = 0x40, // vendor code uses a few of these in 20khz mode?
 		MS = 0x50,
 		DLY = 0x0f,
 		END = 0x00 // Finish commands with this. is this really necessary?
+	}
+
+	public enum UIOCommands : byte
+	{
+		IN = 0x00,
+		OUT = 0x80,
+		DIR = 0x40,
+		END = 0x20
 	}
 
 	public enum VendorCommands : byte
@@ -86,24 +98,34 @@
 
 		internal static byte[] DetectCommand(int i2c_addr)
 		{
-			if (i2c_addr < CH341.I2C_AddressMin || i2c_addr > CH341.I2C_AddressMax)
-			{
-				throw new I2CAddressException(i2c_addr);
-			}
-
-			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.STA,
-				(byte)I2CCommands.OUT, (byte)((i2c_addr << 1) | 0x1), (byte)I2CCommands.STO, (byte)I2CCommands.END };
+			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.STA, (byte)I2CCommands.OUT, (byte)(i2c_addr << 1), (byte)I2CCommands.STO, (byte)I2CCommands.END };
 		}
 
 		internal static byte[] ReadCommand(int length)
 		{
-			// not sure why/if this needs a -1 like I seemed to elsewhere
-			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.IN /*| length*/, (byte)I2CCommands.END };
+			return new byte[] { (byte)VendorCommands.I2C,
+				(byte)((byte)I2CCommands.IN | (length > 1 ? length : 0)), (byte)I2CCommands.END };
+		}
+
+		internal static byte[] ReadCommandACK()
+		{
+			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.IN_ACK, (byte)I2CCommands.END };
+		}
+
+		internal static byte[] ReadCommandNAK()
+		{
+			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.IN_NAK, (byte)I2CCommands.END };
 		}
 
 		internal static byte[] WriteByteCommand(byte bb)
 		{
 			return new byte[] { (byte)VendorCommands.I2C, (byte)I2CCommands.OUT, bb, (byte)I2CCommands.END };
+		}
+
+		internal static byte[] ReadGPIOCommand()
+		{
+			return new byte[] { (byte)VendorCommands.UIO, (byte)UIOCommands.DIR,
+				(byte)UIOCommands.IN, (byte)UIOCommands.END };
 		}
 
 		#endregion Methods

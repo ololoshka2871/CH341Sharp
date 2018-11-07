@@ -57,7 +57,7 @@ namespace CH341Sharp
 
 		#region Methods
 
-		public void Dispose()
+		public void Close()
 		{
 			if (CH341device != null)
 			{
@@ -79,6 +79,11 @@ namespace CH341Sharp
 				}
 				CH341device = null;
 			}
+		}
+
+		public void Dispose()
+		{
+			Close();
 		}
 
 		/// <summary>
@@ -108,21 +113,37 @@ namespace CH341Sharp
 		}
 
 		/// <summary>
-		/// Requests a read of up to 32 bytes
+		/// Read single byte from slave, send ACK
 		/// </summary>
-		/// <param name="length">Size to read up to 32</param>
-		/// <returns>array of data</returns>
-		public byte[] ReadBlock(int length)
+		/// <returns>Byte from slave</returns>
+		public byte ReadByteAck()
 		{
-			Write(I2CcommandBuilder.ReadCommand(length));
-
-			byte[] rval = new byte[length];
-			var err = reader.Read(rval, 0, rval.Length, I2CTimeout, out int transferLength);
-			if (err != ErrorCode.Ok || transferLength != length)
+			byte[] r = new byte[1];
+			var read_command = I2CcommandBuilder.ReadCommandACK();
+			Write(read_command);
+			var err = reader.Read(r, 0, 1, I2CTimeout, out int transferLength);
+			if (err != ErrorCode.Ok || transferLength != 1)
 			{
 				throw new ReadException(err);
 			}
-			return rval;
+			return r[0];
+		}
+
+		/// <summary>
+		/// Read single byte from slave, send NAK
+		/// </summary>
+		/// <returns>Byte from slave</returns>
+		public byte ReadByteNak()
+		{
+			byte[] r = new byte[1];
+			var read_command = I2CcommandBuilder.ReadCommandNAK();
+			Write(read_command);
+			var err = reader.Read(r, 0, 1, I2CTimeout, out int transferLength);
+			if (err != ErrorCode.Ok || transferLength != 1)
+			{
+				throw new ReadException(err);
+			}
+			return r[0];
 		}
 
 		/// <summary>
@@ -167,6 +188,18 @@ namespace CH341Sharp
 				// Claim interface #0.
 				wholeUsbDevice.ClaimInterface(0);
 			}
+		}
+
+		public bool ReadPin(int number)
+		{
+			Write(I2CcommandBuilder.ReadGPIOCommand());
+			byte[] rval = new byte[(int)I2CCommands.MAX];
+			var err = reader.Read(rval, 0, rval.Length, I2CTimeout, out int transferLength);
+			if (err != ErrorCode.Ok || transferLength != 1)
+			{
+				throw new ReadException(err);
+			}
+			return (rval[0] & (1 << number)) != 0;
 		}
 
 		private void Constructors_common()

@@ -82,33 +82,6 @@ namespace CH341Sharp
 		#endregion Methods
 	}
 
-	public class I2CAddressException : CH341Exception
-	{
-		#region Fields
-
-		public readonly int i2c_address;
-
-		#endregion Fields
-
-		#region Constructors
-
-		public I2CAddressException(int i2c_address) : base()
-		{
-			this.i2c_address = i2c_address;
-		}
-
-		#endregion Constructors
-
-		#region Methods
-
-		public override string ToString()
-		{
-			return $"Requested operation with incorrect I2C address {i2c_address}";
-		}
-
-		#endregion Methods
-	}
-
 	public class ReadException : CH341Exception
 	{
 		#region Constructors
