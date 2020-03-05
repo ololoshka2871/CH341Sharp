@@ -3,15 +3,6 @@
 namespace CH341Sharp
 {
 	/// <summary>
-	/// This is just usb standard stuff...
-	/// </summary>
-	public enum CtrlCommands : byte
-	{
-		WRITE_TYPE = 0x40,
-		READ_TYPE = 0xc0
-	}
-
-	/// <summary>
 	/// These are all from ch341dll.h, mostly untested
 	///
 	/// After STA, you can insert MS|millis, and US|usecs to insert a delay
@@ -21,7 +12,7 @@ namespace CH341Sharp
 	/// US|10 is ~10usecs,
 	/// be careful, US|20 = MS|4!  US|40 = ? (switched back to 20khz mode)
 	/// </summary>
-	public enum I2CCommands : byte
+	internal enum I2CCommands : byte
 	{
 		STA = 0x74,
 		STO = 0x75,
@@ -37,7 +28,7 @@ namespace CH341Sharp
 		END = 0x00 // Finish commands with this. is this really necessary?
 	}
 
-	public enum UIOCommands : byte
+	internal enum UIOCommands : byte
 	{
 		IN = 0x00,
 		OUT = 0x80,
@@ -45,7 +36,7 @@ namespace CH341Sharp
 		END = 0x20
 	}
 
-	public enum VendorCommands : byte
+	internal enum VendorCommands : byte
 	{
 		READ_REG = 0x95,
 		WRITE_REG = 0x9a,
@@ -63,7 +54,7 @@ namespace CH341Sharp
 		VERSION = 0x5f // at least in serial mode?
 	}
 
-	public static class I2CcommandBuilder
+	internal static class I2CcommandBuilder
 	{
 		#region Fields
 
