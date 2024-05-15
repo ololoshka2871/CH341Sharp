@@ -15,7 +15,7 @@ namespace Tests
 		{
 			var result = Enumerator.Enumerate();
 			Assert.NotNull(result);
-			Assert.IsNotEmpty(result);
+			Assert.IsTrue(result.Any());
 		}
 
 		[Test]
